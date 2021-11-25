@@ -1,0 +1,725 @@
+public class AllCart_ExecutiveCtrl {
+
+public Integer ActivePath{get;set;}
+public String accLocation {get;set;}
+public orderItem[] addOrderItem{get;set;} 
+public String accId;
+public Double Totals {get;set;}
+//public Double  weeksvar{set;get;}
+public Double  weekRoundOff{set;get;}
+//public Double  noOfWeeks{set;get;}
+//public Boolean checkbxBoolean{get;set;}
+public String cartItems{get;set;}
+public Double retailPrice {get;set;}
+public priceBookEntry[] cartItemsList{get;set;}
+/**This is used for getting the URL dynamically **/
+public List<Network> listOfNetwork {get; set;}
+public Domain dom {get;set;}
+public String finalURL {get;set;}
+public String finalURLReplica {get;set;}
+public String finalurlBusinessHrs {get; set;}
+public List<User> licen {get;set;}
+
+ /*********Order Tool Info Page***********/
+     public integer numberofAttendees {Set;Get;}
+    public integer howManyEmployees {set;get;} 
+    public string CorporateName{set;get;}
+    public order ord{get;set;}
+    public String listofProject{get;set;}
+    public String listofServing{get;set;}
+    public String listofAreas {Set;Get;}
+    public string listOfProjectVenue{set;get;}
+    public String inputCommunity {get; set;}
+    public String inputhelpTxtCommunity{get; set;}
+    Public Account accDetails {Set;Get;}
+    public user currentuser{get;set;}
+    public string agencyName{set;get;}
+    public String contactObjId {Set;get;}   
+    public String accountObjId{get;set;}
+    public String conEmailObj{get;set;}
+ /***************Select Tool Page ********************/
+ public priceBookEntry[] AvailableProducts {get;set;}
+ public List<SelectOption> options{get;set;}
+    public List<SelectOption> soptions{get;set;}
+    public priceBookEntry[] selectedProducts{get;set;} 
+   
+    public List<String> pbId {get;set;}
+    public Set<String> removepbId {get;set;}
+    public String searchString {get;set;}
+    public orderItem[] shoppingCart {get;set;}
+    public Product2 search {Set;Get;}
+    public Boolean overLimit {get;set;}
+    public String toSelect {get; set;}
+    public string selectCategory {get; set;}
+    public string selectsubCategory {get; set;}
+    public list<SelectOption> checkoption{get;set;}
+    public list<string> highlightValues{get;set;}
+    public list<string> SelectedVal{get;set;}
+    public list<SelectOption> checkoption1{get;set;}
+    public list<string> jobType{get;set;}
+    public list<string> SelectedVal1{get;set;}
+    public integer indexVal ;
+    public integer indexVal1 ;
+    public String this_pricebookID ;
+    public list<String> pbId_For_Remove = new list<String>();
+    public map<String,integer> mapVar {get;set;}  
+    public String commonToolFilter {get;set;}   
+    public string HighlightName{get;set;}
+    //new declaration
+    public string ordLoc{get;set;}
+    
+    public AllCart_ExecutiveCtrl(){
+        system.debug('********** START OF AllCart_ExecutiveCtrl.cls');
+            ActivePath = 0;
+            cartItemsList = new priceBookEntry[]{};
+            addOrderItem = new orderItem[]{};
+            Totals = 0;
+             listOfNetwork = new list<Network>();
+        // newly added by Sumathi
+         licen = new List<User>();
+          accDetails = new Account();
+         currentuser = new User();
+        AvailableProducts = new priceBookEntry[]{};   
+            shoppingCart = new orderItem[]{};
+                 search = new Product2();
+                    /***********Order Tool Info Page Class Starts here***********/
+                ord = new Order();
+                listofAreas ='';
+                
+                currentuser=[Select Id,firstname,phone,Name,Email from User where Id=:userinfo.getuserId()];
+                inputCommunity =' Community / Neighborhood Cleanup';
+                inputhelpTxtCommunity ='--------';
+                System.debug('current user:'+currentuser );
+            //  ordLoc = System.currentPageReference().getParameters().get('loc');
+            //  system.debug('Location1'+ordLoc);
+                 accId = [Select state from user where id=:userinfo.getuserid()].State;
+                
+              
+                System.debug('contactId:'+accId );
+                if(accId == 'Georgia' ){
+                    accLocation = 'Atlanta';
+                    
+                }
+                if(accId == '' ||  accId == null){
+                    ordLoc = ApexPages.currentPage().getParameters().get('loc');
+                    system.debug('Global Location'+ordLoc);
+                    accLocation = ordLoc;
+                    system.debug('AccLocation'+accLocation);
+                    
+                }
+                if(accId == 'Ohio'){
+                    accLocation = 'Cincinnati';
+                }
+                if(accId == 'Virginia'){
+                    accLocation = 'Richmond';
+                }
+                if(accId == 'Texas'){
+                    accLocation = 'Houston';
+                }
+                if(accId == 'North Carolina'){
+                    accLocation = 'Charlotte';
+                }
+                if(accId == 'Maryland'){
+                    accLocation = 'Baltimore';
+                }
+                if(accId == 'Arizona'){
+                    accLocation = 'Phoenix';
+                }
+                if(accId == 'Illinois'){
+                    accLocation = 'Chicago';
+                }
+                system.debug('Agency Name:' +agencyName);
+                
+                //get the values of area of impact
+                listofProject ='';
+                
+                
+                //get the values of project type
+                listOfProjectVenue ='';
+                listofServing = '';
+                list<String> fields = new list<String>{'Name'};
+                    if(!test.isRunningTest())
+                   // cont.addFields(new list<String>{'Name','Number_of_Volunteers__c','Corporation_Name__c','People_Served__c','People_Impacted__c','Staff__c','Projects__c','Zip_Code_Project_s_Location__c','Volunteer_Source__c','AccountId','Number_of_Attendees__c','If_yes_how_many_homes__c','EndDate'});
+                //ord = (order)cont.getRecord();
+                
+                system.debug('order details:'+ord);  
+                  
+        /***********Order Tool Info Page Class Ends here***********/
+        
+        /***********Select Tools Page Class starts here-- It is Constructor************/
+                 pbId = new List<String>();
+                removepbId = new Set<String>();
+                mapVar = new map<string,integer>();
+                
+                checkoption = new list<SelectOption>();
+                 highlightValues = new list<string>();
+                jobType = new list<string>();
+                checkoption1 = new list<SelectOption>();
+                SelectedVal=  new list<string>();
+                SelectedVal1=  new list<string>();
+                selectedProducts = new priceBookEntry[]{};
+                
+               // accLocation = [Select contact.Account.ToolBank_Location__c from user where id=:userinfo.getuserid()].Contact.Account.ToolBank_Location__c;
+                system.debug('acc'+accLocation);
+                AvailableProducts = [ select Id, Pricebook2Id,Pricebook2.name, IsActive, Product2.Name, Product2.Category__c ,
+                               Product2.IsActive, Product2.Description, UnitPrice,Product2.Held__c,product2.Location__c,
+                                product2.sub_category__c,product2.Tool_Tip__c,Product2.Product_Image__c,Product2.createddate,product2.Highlights__c,
+                                product2.Don_t_Show_in_Cart_Page__c
+                               from PricebookEntry where IsActive=true   and  Pricebook2.name= :accLocation and product2.Don_t_Show_in_Cart_Page__c = false 
+                                     and product2.Held__c > 0 and product2.Sort_Category__c != '' 
+                               order by product2.Sort_Category__c,product2.name asc]; 
+                System.debug(AvailableProducts);
+                for(PricebookEntry p:AvailableProducts)
+                {
+                    mapVar.put(p.id,0);
+                    this_pricebookID = p.Pricebook2Id;
+                }
+                updateAvailableList();  
+                Schema.DescribeFieldResult fieldResult = Product2.Highlights__c.getDescribe();
+                List<Schema.PicklistEntry> picklistValuesList = fieldResult.getPicklistValues();
+                
+                for( Schema.PicklistEntry f : picklistValuesList)
+                 {
+                      highlightValues.add(f.getLabel());
+                      SelectOption option = new SelectOption(f.getLabel(),f.getLabel());
+                      checkoption.add(option);
+                 } 
+                Schema.DescribeFieldResult fieldResult1 = Product2.jobtype__c.getDescribe();
+                List<Schema.PicklistEntry> picklistValuesList1 = fieldResult1.getPicklistValues();
+                
+                for( Schema.PicklistEntry f : picklistValuesList1)
+                 {
+                      jobType.add(f.getLabel());
+                      SelectOption option1 = new SelectOption(f.getLabel(),f.getLabel());
+                      checkoption1.add(option1);
+                 } 
+                 
+                 /**This is used for getting the URL dynamically **/
+         String urlpath ;
+          String loc;
+          string removechar;
+        /* String loc = '%'+accLocation+'%';*/
+        if(accLocation.contains('-')){
+        string removeCharac = accLocation;
+         removechar = removeCharac.replace('-', '');
+          loc = '%'+removechar+'%';
+        }
+        else{
+             loc = '%'+accLocation+'%';
+              removechar = accLocation;
+        }
+           System.debug('Location'+loc);
+          listOfNetwork = [SELECT Name, UrlPathPrefix, Status FROM Network where UrlPathPrefix like :loc  and status='live' ];
+          dom = [select domain from domain];
+           licen = [SELECT Profile.UserLicense.Name FROM User where id=:userinfo.getuserid()];
+           System.debug('List'+listOfNetwork);
+           System.debug('license'+licen);
+            for(Network n : listOfNetwork){
+              for(User l : licen)  {
+                  
+               /** if(n.name.contains('Agency') && l.Profile.UserLicense.name == 'Customer Community Login'){
+                    urlpath = n.UrlPathPrefix;
+                    finalURL = 'https://'+dom.domain+'/'+urlpath;
+                       
+                }**/
+                 if(n.name.contains('Partner') && l.Profile.UserLicense.name == 'Partner Community'){
+                     System.debug('TRAILERRRRRRRRR1'+n.name);
+                    urlpath = n.UrlPathPrefix;
+                    finalURL = 'https://'+dom.domain+'/'+urlpath;
+                }
+                 if( n.name.contains('Trailer') && n.UrlPathPrefix.contains(removechar) && l.Profile.UserLicense.name == 'Partner Community' ){
+                     System.debug('TRAILERRRRRRRRR'+l.Profile.UserLicense.name );
+                    urlpath = n.UrlPathPrefix;
+                    finalURL = 'https://'+dom.domain+'/'+urlpath;
+                }
+                 /** else if(n.name.contains('trailerMU1') ){
+                    urlpath = n.UrlPathPrefix;
+                    finalURL = 'https://'+dom.domain+'/'+urlpath;
+                }
+                else if(n.name.contains('trailerMU2') ){
+                    urlpath = n.UrlPathPrefix;
+                    finalURL = 'https://'+dom.domain+'/'+urlpath;
+                } **/
+              } 
+            }
+       finalURLReplica = '/apex/AllCartReplica_Executive?loc=Atlanta';
+        finalurlBusinessHrs = '/apex/AllCartBusinessHoursVfpage?loc=Atlanta';
+       System.debug('Replica'+finalURLReplica);
+          System.debug('dom'+dom);
+         
+    }
+    
+    
+     /*****************Order Tool Info Page Method starts here*******************/
+    public void dogetOrderInfo(){
+       
+//ordLoc = System.currentPageReference().getParameters().get('loc');
+  //            system.debug('Location'+ordLoc);        
+        
+        system.debug(listofAreas);
+        if(String.isNotBlank(listofAreas))
+        {
+            List<String> vlauesstr = listofAreas.split(',');
+            ord.Areas_Of_Impact__c=  String.join(vlauesstr, ';');
+            ord.Areas_Of_Impact__c.replaceAll(':',',');
+        }
+        system.debug('area of impacted:'+ord.Areas_Of_Impact__c);
+        
+        
+        
+        
+        system.debug(listofProject);
+        if(String.isNotBlank(listofProject))
+        {
+            List<String> vlauesstrPro = listofProject.split(',');
+            ord.Project_Type__c=  String.join(vlauesstrPro, ';');
+            ord.Project_Type__c.replaceAll(':',',');
+        }
+        system.debug('project type selected:'+ord.Project_Type__c);
+        
+        
+        
+        
+        if(String.isNotBlank(listOfProjectVenue))
+        {
+            List<String> vlauesstrProVen = listOfProjectVenue.split(',');
+            ord.Project_Venue__c=  String.join(vlauesstrProVen, ';');
+            ord.Project_Venue__c.replaceAll(':',',');
+        }
+        system.debug('list of venue project:'+listOfProjectVenue);
+        ord.If_yes_how_many_homes__c=howManyEmployees;
+        system.debug('how many emp:'+ord.If_yes_how_many_homes__c);
+        ord.Number_of_Attendees__c=numberofAttendees;
+        system.debug('Number of attendee:'+ord.Number_of_Attendees__c);
+        system.debug('all ords:'+ ord.Project_Venue__c);
+        system.debug('corporation name:'+ ord.Corporation_Name__c);
+        system.debug('order Account:'+ord.accountId);
+        
+        //accountObjId = ord.accountId;
+        //If project type field is empty then throw an error
+        
+        if (String.isBlank(listofProject) )
+        {
+            
+            ApexPages.addmessage(new ApexPages.message(ApexPages.severity.ERROR,'Project Type cannot be blank'));
+            
+            
+        } 
+        //If area of impact field is empty then throw an error
+        if (String.isBlank(listofAreas) )
+        {
+            
+            ApexPages.addmessage(new ApexPages.message(ApexPages.severity.ERROR,'Areas of impact cannot be blank'));
+            
+        } 
+        //If project venue field is empty then throw an error
+        if (String.isBlank(listOfProjectVenue) )
+        {
+            
+            ApexPages.addmessage(new ApexPages.message(ApexPages.severity.ERROR,'Project Venue cannot be blank'));
+            
+        }  
+         if (String.isBlank(ord.AccountId) )
+        {
+            
+            ApexPages.addmessage(new ApexPages.message(ApexPages.severity.ERROR,'account cannot be blank'));
+            
+            
+        } 
+        if (String.isBlank(contactObjId) )
+        {
+            
+            ApexPages.addmessage(new ApexPages.message(ApexPages.severity.ERROR,'Contact cannot be blank'));
+            
+            
+        }
+         
+        system.debug('AREA OF IMPACT:'+ord.Areas_Of_Impact__c);
+        system.debug('PROJECT TYPE SELECTED :'+ord.Project_Type__c);
+        system.debug('PROJECT VENUE:'+listOfProjectVenue);
+        system.debug( 'Number of attendee:'+ord.Number_of_Attendees__c); 
+        system.debug('how many emp:'+ord.If_yes_how_many_homes__c);
+        system.debug('account details:'+accDetails);
+          system.debug('order Account:'+accountObjId);
+             system.debug('order contact:'+contactObjId);
+       system.debug('end date:'+ord.EndDate);
+       
+     
+       //ord.contact.name=accDetails.contactId;
+       //insert ord;
+    }
+    public PageReference backToHomePage(){
+        PageReference pref = new PageReference('/' );
+        pref.setredirect(true);
+        return pref; 
+        
+    }
+    
+    /********************Order Tool Info Page Method ends here************************/
+    
+     public void sectionChanged(){
+          /**  
+        ****** Commented because it is achieved using jquery *********
+     System.debug(ApexPages.currentPage().getParameters().get('ActivePathVal'));
+        //System.debug(Integer.valueOf(ApexPages.currentPage().getParameters().get('ActivePathVal')));
+      if(ApexPages.currentPage().getParameters().get('ActivePathVal')!=null){
+        ActivePath = Integer.valueOf(ApexPages.currentPage().getParameters().get('ActivePathVal'));
+           
+      }
+        else
+            ActivePath =ActivePath+1;
+             System.debug('Total'+Totals);
+              weeksvar =ord.EffectiveDate.daysBetween(ord.EndDate);
+            noOfWeeks = weeksvar/7;
+            weekRoundOff = Math.ceil(noOfWeeks);
+            Totals = 0;
+          if(ActivePath == 2 && Totals == 0){
+             
+              for(PricebookEntry p : selectedProducts){
+                 // Totals =+ (p.UnitPrice * mapVar.get(p.id));
+                  Totals = Totals + (p.UnitPrice * mapVar.get(p.id) * weekRoundOff );
+                  System.debug('Total'+Totals);
+              } 
+              
+          }
+        System.debug(weekRoundOff); **/
+    }
+    
+    public void prevSectionchanged(){
+        ActivePath =ActivePath - 1;
+        if(ActivePath == 2){
+            // ActivePath =ActivePath - 1;
+
+        }
+    }
+   
+      /***********Select Tools Page Class starts here -- It is for Search functionality************/
+      public void updateAvailableList() {
+        
+        // We dynamically build a query string and exclude items already in the shopping cart
+       String qString = 'select Id, Pricebook2Id, IsActive, Product2.Name,Product2.Product_Image__c,Product2.Highlights__c,Product2.createddate, Pricebook2.name,product2.Tool_Tip__c,Product2.Alternative_Tool_Name__c,Product2.Category__c , Product2.sub_category__c,Product2.IsActive, Product2.Description, UnitPrice,Product2.Held__c from PricebookEntry where IsActive=true and Pricebook2.name = \'' + accLocation + '\'';
+       
+        
+        // note that we are looking for the search string entered by the user in the name OR description
+        // modify this to search other fields if desired
+        if(String.isNotBlank(searchString)){
+            qString+= ' and (Product2.Name like \'%' + searchString + '%\' or Product2.Category__c like \'%' + searchString + '%\' or Product2.sub_category__c like \'%' + searchString + '%\' or Product2.Alternative_Tool_Name__c like \'%' + searchString + '%\' or Product2.Tool_Tip__c like \'%' + searchString + '%\')';
+        }system.debug('Categorty'+selectCategory );
+        
+        if(search !=null && String.isNotBlank(selectCategory ))
+        { 
+            qString+= ' AND  Product2.Category__c = \''+String.escapeSingleQuotes(selectCategory.trim()) +'\'';
+        }
+           if( String.isNotBlank(selectCategory ))
+        { 
+            qString+= ' AND  Product2.Category__c = \''+String.escapeSingleQuotes(selectCategory.trim()) +'\'';
+        }
+           if( String.isNotBlank(selectsubCategory ))
+        { 
+            qString+= ' AND  Product2.sub_category__c = \''+String.escapeSingleQuotes(selectsubCategory.trim()) +'\'';
+        }
+       system.debug('subCAtegorty'+selectsubCategory );
+        if(search !=null && search.IsActive )
+        { 
+            qString+= 'AND  Product2.IsActive ='+search.IsActive ;
+        }     
+        Set<Id> selectedEntries = new Set<Id>();
+        //for(orderItem d:shoppingCart){
+          //  selectedEntries.add(d.PricebookEntryId);
+        //}
+        
+        if(selectedEntries.size()>0){
+            String tempFilter = ' and Id not in (';
+            for(Id i : selectedEntries){
+                tempFilter+= '\'' + (String)i + '\',';
+            }
+            String extraFilter = tempFilter.substring(0,tempFilter.length()-1);
+            extraFilter+= ')';
+            
+            qString+= extraFilter;
+        }
+        
+        qString+= ' order by product2.Category__c,product2.sub_category__c,Product2.Name asc';
+        qString+= ' limit 101';
+        
+        system.debug('qString:' +qString);        
+        AvailableProducts = database.query(qString);
+        
+        // We only display up to 100 results... if there are more than we let the user know (see vf page)
+        if(AvailableProducts.size()==101){
+            AvailableProducts.remove(100);
+            overLimit = true;
+        }
+        else{
+            overLimit=false;
+        }
+        
+    }
+      /***********Select Tools Page Class ends here -- Search functionality end here************/
+    
+    
+  /***********Select Tools Page Class ends here -- Other functionality end here************/
+    
+    
+    public PAgeReference addOrderItem(){
+         /**  
+        ****** Commented because it is achieved using jquery *********
+        System.debug('pbID'+ApexPages.currentPage().getParameters().get('pbId'));
+        System.debug('PBquantity'+ApexPages.currentPage().getParameters().get('PBquantity'));
+        if(ApexPages.currentPage().getParameters().get('PBquantityE') != null ){
+            mapVar.put(ApexPages.currentPage().getParameters().get('pbIdE'),integer.valueOf(ApexPages.currentPage().getParameters().get('PBquantityE')));
+            
+        }
+        else{
+        mapVar.put(ApexPages.currentPage().getParameters().get('pbId'),integer.valueOf(ApexPages.currentPage().getParameters().get('PBquantity'))+1);
+        } 
+        pbId.add(ApexPages.currentPage().getParameters().get('pbIdE')); //For User Entered Quantity
+        removepbId.add(ApexPages.currentPage().getParameters().get('pbIdE')); //For User Entered Quantity
+        pbId.add(ApexPages.currentPage().getParameters().get('pbId'));
+        removepbId.add(ApexPages.currentPage().getParameters().get('pbId'));
+        
+       if(ApexPages.currentPage().getParameters().get('PBquantity')!=null || ApexPages.currentPage().getParameters().get('PBquantityE')!=null)
+                
+        selectedProducts=[ select Id, Pricebook2Id,Pricebook2.name, IsActive, Product2.Name, Product2.Category__c ,
+                       Product2.IsActive, Product2.Description, UnitPrice,Product2.Held__c,product2.Location__c,Quantity_backend__c,
+                        product2.sub_category__c,product2.Tool_Tip__c,Product2.Product_Image__c,Product2.createddate
+                       from PricebookEntry where IsActive=true  and  Pricebook2.name= :accLocation and id IN  :pbId 
+                       order by product2.Category__c,product2.sub_category__c,Product2.Name asc];
+  **/      
+    return null;
+    }
+   
+     public PageReference removeOrderItem(){
+          /**  
+        ****** Commented because it is achieved using jquery *********
+        System.debug('removepbId'+ApexPages.currentPage().getParameters().get('removepbId'));
+        System.debug('removePBquantity'+ApexPages.currentPage().getParameters().get('removePBquantity'));
+        
+      if(ApexPages.currentPage().getParameters().get('removePBquantity') == '1'){
+       pbId_For_Remove.add(ApexPages.currentPage().getParameters().get('removepbId'));
+        
+        mapVar.put(ApexPages.currentPage().getParameters().get('removepbId'),integer.valueOf(ApexPages.currentPage().getParameters().get('removePBquantity'))-1);
+        removepbId.removeAll(pbId_For_Remove);
+          
+          selectedProducts.clear();
+          pbId.clear();
+          pbId.addAll(removepbId);
+            System.debug('Test3'+pbId);
+     }
+     if(ApexPages.currentPage().getParameters().get('removePBquantity') >= '1'){
+       pbId_For_Remove.add(ApexPages.currentPage().getParameters().get('removepbId'));
+        
+        mapVar.put(ApexPages.currentPage().getParameters().get('removepbId'),integer.valueOf(ApexPages.currentPage().getParameters().get('removePBquantity'))-1);
+        }
+        
+        selectedProducts=[ select Id, Pricebook2Id,Pricebook2.name, IsActive, Product2.Name, Product2.Category__c ,
+                       Product2.IsActive, Product2.Description, UnitPrice,Product2.Held__c,product2.Location__c,Quantity_backend__c,
+                        product2.sub_category__c,product2.Tool_Tip__c,Product2.Product_Image__c,Product2.createddate
+                       from PricebookEntry where IsActive=true  and  Pricebook2.name= :accLocation and id IN  :pbId 
+                       order by product2.Category__c,product2.sub_category__c,Product2.Name asc];
+       **/ 
+    return null;
+    }
+    public PageReference selectedTools(){
+         /**  
+        ****** Commented because it is achieved using jquery *********
+        if(ApexPages.currentPage().getParameters().get('CheckedVal') == 'true' || ApexPages.currentPage().getParameters().get('ActivePathVal') == '2')
+        {           AvailableProducts.clear();
+         if(selectedProducts.size() >= 1){
+            AvailableProducts.addAll(selectedProducts);
+         } else  if(selectedProducts.size()== 0){
+                  ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.INFO, 'my error msg');
+            ApexPages.addMessage(myMsg);
+         }
+        }else
+            
+            AvailableProducts = [ select Id, Pricebook2Id,Pricebook2.name, IsActive, Product2.Name, Product2.Category__c ,
+                       Product2.IsActive, Product2.Description, UnitPrice,Product2.Held__c,product2.Location__c,Quantity_backend__c,
+                        product2.sub_category__c,product2.Tool_Tip__c,Product2.Product_Image__c,Product2.createddate,product2.Highlights__c 
+                       from PricebookEntry where IsActive=true  and  Pricebook2.name= :accLocation 
+                       order by product2.Category__c,product2.sub_category__c,Product2.Name asc];               
+**/       
+return null;
+    }
+     public void clearfilter(){
+        searchString=null;
+        selectCategory = null;
+        updateAvailableList();
+    }
+     public List<Selectoption> getItemsList(){
+   options = new List<SelectOption>(); 
+   List<Schema.Picklistentry> fieldResult = Product2.Category__c.getDescribe().getPicklistValues();
+   options.add(new SelectOption('', 'Select Category'));
+   for(Schema.PicklistEntry f : fieldResult) {
+      options.add(new SelectOption(f.getValue(), f.getLabel()));
+   }
+   System.debug('Options'+options);
+   return options;
+}
+     public List<Selectoption> getItemsList1(){
+   soptions = new List<SelectOption>(); 
+   List<Schema.Picklistentry> fieldResult1 = Product2.sub_category__c.getDescribe().getPicklistValues();
+   soptions.add(new SelectOption('', 'Select Category'));
+   for(Schema.PicklistEntry f1 : fieldResult1) {
+      soptions.add(new SelectOption(f1.getValue(), f1.getLabel()));
+   }
+   System.debug('Options'+soptions);
+   return soptions;
+}
+    
+     public PageReference selectedJobTypeValFun(){
+          /**  
+        ****** Commented because it is achieved using jquery *********
+      String chkbx = Apexpages.currentpage().getparameters().get('commonToolChecked');
+     if(chkbx == 'true'){
+        AvailableProducts = [ select Id, Pricebook2Id,Pricebook2.name, IsActive, Product2.Name, Product2.Category__c ,
+                       Product2.IsActive, Product2.Description, UnitPrice,Product2.Held__c,product2.Location__c,
+                        product2.sub_category__c,product2.Tool_Tip__c,Product2.Product_Image__c,Product2.createddate,product2.Highlights__c,
+                        product2.jobtype__c     
+                       from PricebookEntry where IsActive=true and  Pricebook2.name= :accLocation  and product2.Highlights__c='Common Tool' 
+                       order by product2.Category__c,product2.sub_category__c,Product2.Name asc];
+     }
+     else 
+         AvailableProducts = [ select Id, Pricebook2Id,Pricebook2.name, IsActive, Product2.Name, Product2.Category__c ,
+                       Product2.IsActive, Product2.Description, UnitPrice,Product2.Held__c,product2.Location__c,
+                        product2.sub_category__c,product2.Tool_Tip__c,Product2.Product_Image__c,Product2.createddate,product2.Highlights__c,
+                        product2.jobtype__c     
+                       from PricebookEntry where IsActive=true and  Pricebook2.name= :accLocation 
+                       order by product2.Category__c,product2.sub_category__c,Product2.Name asc];
+     
+      
+     // and  Pricebook2.name= :accId and product2.Highlights__c IN :SelectedVal
+   System.debug(AvailableProducts);  
+   System.debug(SelectedVal);
+**/
+     return null;
+ }
+    
+    /***********Select Tools Page Class ends here -- Other functionality end here************/
+    
+     /*******************Highlights Method starts here***********************************/
+   public PageReference checkbxHights(){
+       /**  
+        ****** Commented because it is achieved using jquery *********
+     checkbxBoolean = Boolean.valueOf(Apexpages.currentpage().getparameters().get('comcheckbx'));
+      HighlightName = Apexpages.currentpage().getparameters().get('HighlightName');
+**/
+     return null;
+    }
+    /*******************Highlights Method ends here***********************************/
+    
+    
+    /*******************Save Method to Commit Order starts here***********************************/
+    
+   public PageReference saveOrder(){
+         System.debug('Hello');
+        System.debug('SB');
+        try{
+             if(String.isNotBlank(listofAreas))
+        {
+            List<String> vlauesstr = listofAreas.split(',');
+            ord.Areas_Of_Impact__c=  String.join(vlauesstr, ';');
+            ord.Areas_Of_Impact__c.replaceAll(':',',');
+        }
+       
+        if(String.isNotBlank(listofProject))
+        {
+            List<String> vlauesstrPro = listofProject.split(',');
+            ord.Project_Type__c=  String.join(vlauesstrPro, ';');
+            ord.Project_Type__c.replaceAll(':',',');
+        }
+       if(String.isNotBlank(listOfProjectVenue))
+        {
+            List<String> vlauesstrProVen = listOfProjectVenue.split(',');
+            ord.Project_Venue__c=  String.join(vlauesstrProVen, ';');
+            ord.Project_Venue__c.replaceAll(':',',');
+        }
+         
+         if(String.isNotBlank((listofServing))){
+            List<String> vlauesstrServ = listofServing.split(',');
+            ord.Serving_50_of_low_income_people__c = listofServing;
+         //   ord.Serving_50_of_low_income_people__c = listofServing;
+        }
+        
+        ord.If_yes_how_many_homes__c=howManyEmployees;
+        ord.Number_of_Attendees__c=numberofAttendees;
+       ord.AccountId = ord.AccountId;
+        ord.Status='Unconfirmed';
+        ord.ContactCustom__c = contactObjId;
+        ord.Pricebook2Id = this_pricebookID;
+          System.debug('testcartitem :'+cartItems);
+        insert ord;
+         List<JSON2Apex> des = JSON2Apex.parse(cartItems);
+   
+    System.debug('Cart Values'+ des);
+    for(JSON2APEX d : des ){
+         orderItem ordrItem = new orderItem();
+          ordrItem.orderId = ord.Id;
+          ordrItem.PricebookEntryId = d.Id;
+          ordrItem.Quantity = d.qty;
+          ordrItem.Check_out_Quantity__c = d.qty;
+          ordrItem.UnitPrice =  d.price;
+          ordrItem.totalprice__c = Decimal.valueOf(d.totalprice);
+          ordrItem.Retail_Price__c = d.retailprice;
+          ordrItem.Status__c = 'Unconfirmed';
+          ordrItem.Loan_Date__c = ord.EffectiveDate;
+          ordrItem.Return_Date__c = ord.EndDate;
+			
+           ordrItem.Requested_Borrowing_Period1__c = ord.Requested_borrowing_period__c;
+        ordrItem.Base_Fee__c = Decimal.valueOf(d.totalprice);
+       addOrderItem.add(ordrItem); 
+       //idss.add(d.Id);
+       
+      
+    }
+      System.debug('Products'+addOrderItem);
+       insert addOrderItem;
+            for(OrderItem oI:addOrderItem){
+                QuoteProduct.availableOnSelect(oI.PricebookEntryId,oI.OrderId, oI.Return_Date__c,oI.Scheduled_Pickup_Date__c, false, oI.check_out_quantity__c, null,null);
+            }
+        System.debug('ORDER'+ord);
+        /** for(PricebookEntry p : selectedProducts){
+            orderItem ordrItem = new orderItem();
+          ordrItem.orderId = ord.Id;
+           // orderItem.order.Pricebook2Id = p.Pricebook2Id;
+            ordrItem.PricebookEntryId = p.Id;
+            ordrItem.product2Id = p.product2Id;
+             ordrItem.UnitPrice =  p.UnitPrice;
+             ordrItem.totalprice__c = p.UnitPrice * mapVar.get(p.id) * weekRoundOff ;
+             ordrItem.Quantity = mapVar.get(p.Id);
+           // addOrderItem.add(ordrItem);
+        } **/
+       
+        System.debug('ProductsAfterInserted'+addOrderItem);
+        }catch(exception e){
+            
+            System.debug('Error while saving' +e);
+                        System.debug('Error while saving' +e.getLineNumber());
+
+        }
+        pagereference pr;
+        if(finalURL!=null){
+          pr = new pagereference(finalURL+'/s/detail/'+ord.id);
+           
+        }
+        else{
+           // pr = new pagereference('/lightning/r/Order/' +ord.id  + '/view' );
+           if(addOrderItem.size()>0){
+           pr = Page.orderConfirmationExe_Page;
+           pr.getParameters().put('orderId',ord.id);
+           }else{
+             pr = Page.orderConfirmationExe_Page;
+     pr.getParameters().put('orderId',null);   
+           }
+           
+
+        }
+       // pagereference pr = new pagereference(System.URL.getSalesforceBaseUrl().toExternalForm()+'/NewAtlanta/s/' );
+        pr.setRedirect(true);
+        system.debug('********** END OF AllCart_ExecutiveCtrl.cls');
+        return pr;
+    }
+    
+    /************************Save Method to Commit Order ends here*****************************/
+
+}
